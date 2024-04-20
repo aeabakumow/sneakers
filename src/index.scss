@@ -114,6 +114,11 @@ header {
   box-shadow: -10px 4px 24px 0px rgba(0, 0, 0, 0.1);
   padding: 30px;
 
+  .items{
+    overflow: auto;
+    margin-bottom: 40px;
+  }
+
   h2 {
     margin: 0;
   }
@@ -141,27 +146,45 @@ header {
     }
   }
 
-}
-
-.greenButton{
-    width: 100%;
-    height: 55px;
-    background: #9DD558;
-    border-radius: 18px;
-    border: 0;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.2s ease-in-out;
+  .greenButton {
+    position: relative;
 
     &:hover {
-      background: lighten(#9DD558, 5%);
+      img {
+        transform: translateX(5px);
+      }
     }
 
-    &:active {
-      background: darken(#9DD558, 5%);
+
+    img {
+      position: absolute;
+      right: 30px;
+      top: 20px;
+      transition: transform 0.15s ease-in-out;
     }
+  }
+
+}
+
+.greenButton {
+  width: 100%;
+  height: 55px;
+  background: #9DD558;
+  border-radius: 18px;
+  border: 0;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+
+  &:hover {
+    background: lighten(#9DD558, 5%);
+  }
+
+  &:active {
+    background: darken(#9DD558, 5%);
+  }
 }
 
 

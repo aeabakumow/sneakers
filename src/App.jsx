@@ -1,35 +1,35 @@
 import Card from "./components/Card";
 import Header from "./components/Header";
 import OverLayDrawer from "./components/OverLayDrawer";
-
-const arr = [
-  {
-    title: "Nike Blazer Mid Suede Men's Sneakers",
-    price: 129.99,
-    imageUrl: "/sneakers/01.jpg",
-  },
-  {
-    title: "Nike Air Max 270 Men's Sneakers",
-    price: 129.99,
-    imageUrl: "/sneakers/02.jpg",
-  },
-  {
-    title: "Nike Blazer Mid Suede Men's Sneakers",
-    price: 84.99,
-    imageUrl: "/sneakers/03.jpg",
-  },
-  {
-    title: "Puma X Aka Boku Future Rider sneakers",
-    price: 129.99,
-    imageUrl: "/sneakers/04.jpg",
-  },
-];
+import React from "react";
 
 function App() {
+  const [items, setItems] = React.useState([]);
+  const [cartItems, setCartItems] = React.useState([]);
+  const [cartOpened, setCartOpened] = React.useState(false);
+
+  React.useEffect(() => {
+    fetch("https://6628cb7c54afcabd0736f739.mockapi.io/items")
+      .then((res) => {
+        return res.json();
+      })
+      .then((json) => {
+        setItems(json);
+      });
+  }, []);
+
+  const addToCart = (obj) => {
+    setCartItems((prev) => [...prev, obj]);
+  };
+
+  console.log(cartItems);
+
   return (
     <div className="wrapper clear">
-      <OverLayDrawer />
-      <Header />
+      {cartOpened ? (
+        <OverLayDrawer zalupa={cartItems} onClose={() => setCartOpened(false)} />
+      ) : null}
+      <Header onClickCart={() => setCartOpened(true)} />
       <div className="content p-40">
         <div className="d-flex align-center justify-between  mb-40">
           <h1>All sneakers</h1>
@@ -38,15 +38,15 @@ function App() {
             <input placeholder="Search ..." />
           </div>
         </div>
-        <div className="d-flex">
-          {arr.map((obj) => (
+        <div className="d-flex flex-wrap">
+          {items.map((item) => (
             <Card
-              key={obj.id}
-              title={obj.title}
-              price={obj.price}
-              imageUrl={obj.imageUrl}
-              onClickFavorite={() => console.log('Added to bookmarks')}
-              onClickPlus={() => console.log('Pressed plus')}
+              key={item.id}
+              title={item.title}
+              price={item.price}
+              imageUrl={item.imageUrl}
+              onClickFavorite={() => console.log("Added to bookmarks")}
+              onPlus={(obj) => addToCart(obj)}
             />
           ))}
         </div>

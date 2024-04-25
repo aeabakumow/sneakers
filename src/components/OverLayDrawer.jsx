@@ -1,4 +1,4 @@
-function OverLayDrawer({onClose, zalupa = []}) {
+function OverLayDrawer({onClose, onRemove, zalupa = []}) {
   return (
     <div className="overlay">
       <div className="drawer d-flex flex-column">
@@ -25,6 +25,7 @@ function OverLayDrawer({onClose, zalupa = []}) {
                 <b>{obj.price} $</b>
               </div>
               <img
+                onClick={() => onRemove(obj.id)}
                 className="removeBtn"
                 src="src\assets\btn-remove.svg"
                 alt="Remove"

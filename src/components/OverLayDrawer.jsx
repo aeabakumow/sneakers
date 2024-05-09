@@ -1,4 +1,40 @@
+import React from "react";
+import axios from "axios";
+import Info from "./info";
+import AppContext from "../context";
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 function OverLayDrawer({ onClose, onRemove, basket = [] }) {
+  const { cartItems, setCartItems } = React.useContext(AppContext);
+  const [orderId, setOrderId] = React.useState(null);
+  const [isOrderCompleted, setIsOrderCompleted] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  const onClickOrder = async () => {
+    try {
+      setIsLoading(true);
+      const { data } = await axios.post(
+        "https://662b9d6cde35f91de158e41b.mockapi.io/orders",
+        { items: cartItems }
+      );
+      setOrderId(data.id);
+      setIsOrderCompleted(true);
+      setCartItems([]);
+
+      for (let i = 0; i < cartItems.length; i++) {
+        const item = cartItems[i];
+        await axios.delete(
+          "https://662b9d6cde35f91de158e41b.mockapi.io/cart/" + item.id
+        );
+        await delay(1000);
+      }
+    } catch (error) {
+      alert("Error when creating an order");
+    }
+    setIsLoading(false);
+  };
+
   return (
     <div className="overlay">
       <div className="drawer d-flex flex-column">
@@ -13,9 +49,8 @@ function OverLayDrawer({ onClose, onRemove, basket = [] }) {
         </h2>
 
         {basket.length > 0 ? (
-          <div>
-            {" "}
-            <div  className="items flex">
+          <div className="d-flex flex-column flex">
+            <div className="items flex">
               {basket.map((obj) => (
                 // eslint-disable-next-line react/jsx-key
                 <div className="cartItem d-flex align-center mb-20">
@@ -49,29 +84,29 @@ function OverLayDrawer({ onClose, onRemove, basket = [] }) {
                   <b>10,74$</b>
                 </li>
               </ul>
-              <button className="greenButton">
+              <button
+                disabled={isLoading}
+                onClick={onClickOrder}
+                className="greenButton"
+              >
                 Checkout <img src="src\assets\arrow.svg" alt="Arrow" />
               </button>
             </div>
           </div>
         ) : (
-          <div className="cartEmpty d-flex align-center justify-center flex-column flex">
-            <img
-              className="mb-20"
-              width="120px"
-              height="120px"
-              src="src\assets\empty-cart.jpg"
-              alt="Empty"
-            />
-            <h2>Cart is empty</h2>
-            <p className="opacity-6">
-              Add at least one pair of sneakers to complete your order.
-            </p>
-            <button onClick={onClose} className="greenButton">
-              <img src="src\assets\arrow.svg" alt="Arrow" />
-              Hark back
-            </button>
-          </div>
+          <Info
+            title={isOrderCompleted ? "Order is processed" : "Cart is empty"}
+            description={
+              isOrderCompleted
+                ? `Your order # ${orderId} will soon be transferred to courier delivery`
+                : "Add at least one pair of sneakers to complete your order"
+            }
+            image={
+              isOrderCompleted
+                ? "src/assets/complete-order.jpg"
+                : "src/assets/empty-cart.jpg"
+            }
+          />
         )}
       </div>
     </div>

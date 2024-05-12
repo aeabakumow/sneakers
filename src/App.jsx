@@ -3,10 +3,11 @@ import { Routes, Route } from "react-router-dom";
 import axios from "axios";
 
 import Header from "./components/Header";
-import OverLayDrawer from "./components/OverLayDrawer";
+import OverLayDrawer from "./OverLayDrawer";
 
 import Home from "./pages/Home";
 import Favorites from "./pages/Favorites";
+import Orders from "./pages/Orders";
 
 import AppContext from "./context";
 
@@ -87,7 +88,7 @@ function App() {
 
   const isItemAdded = (id) => {
     return cartItems.some((obj) => Number(obj.id) === Number(id));
-  }
+  };
 
   return (
     <AppContext.Provider
@@ -99,16 +100,17 @@ function App() {
         onAddToFavorite,
         setCartOpened,
         setCartItems,
+        addToCart,
       }}
     >
       <div className="wrapper clear">
-        {cartOpened ? (
-          <OverLayDrawer
-            basket={cartItems}
-            onClose={() => setCartOpened(false)}
-            onRemove={onRemoveItem}
-          />
-        ) : null}
+        <OverLayDrawer
+          basket={cartItems}
+          onClose={() => setCartOpened(false)}
+          onRemove={onRemoveItem}
+          opened={cartOpened}
+        />
+
         <Header onClickCart={() => setCartOpened(true)} />
 
         <Routes>
@@ -128,6 +130,7 @@ function App() {
             }
           />
           <Route path="/favorites" element={<Favorites />} />
+          <Route path="/orders" element={<Orders />} />
         </Routes>
       </div>
     </AppContext.Provider>

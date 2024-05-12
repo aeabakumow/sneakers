@@ -1,15 +1,19 @@
 import React from "react";
 import axios from "axios";
-import Info from "./info";
+
+import Info from "../components/info";
 import AppContext from "../context";
+
+import styles from './Drawer.module.scss';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-function OverLayDrawer({ onClose, onRemove, basket = [] }) {
+function OverLayDrawer({ onClose, onRemove, basket = [], opened }) {
   const { cartItems, setCartItems } = React.useContext(AppContext);
   const [orderId, setOrderId] = React.useState(null);
   const [isOrderCompleted, setIsOrderCompleted] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const totalPrice = cartItems.reduce((sum, obj) => obj.price + sum, 0);
 
   const onClickOrder = async () => {
     try {
@@ -36,8 +40,8 @@ function OverLayDrawer({ onClose, onRemove, basket = [] }) {
   };
 
   return (
-    <div className="overlay">
-      <div className="drawer d-flex flex-column">
+    <div className={`${styles.overlay} ${opened ? styles.overlayVisible : ''}`}>
+      <div className={styles.drawer}>
         <h2 className="mb-30 d-flex justify-between ">
           Pannier
           <img
@@ -76,12 +80,12 @@ function OverLayDrawer({ onClose, onRemove, basket = [] }) {
                 <li>
                   <span>Total:</span>
                   <div></div>
-                  <b>214,98$</b>
+                  <b>{totalPrice.toFixed(2)}$</b>
                 </li>
                 <li>
                   <span>Tax 5%:</span>
                   <div></div>
-                  <b>10,74$</b>
+                  <b>{(totalPrice*0.05).toFixed(2)}$</b>
                 </li>
               </ul>
               <button
